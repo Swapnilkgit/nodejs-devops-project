@@ -23,7 +23,12 @@ pipeline {
             steps {
                 sh 'node --check app.js'
                 sh 'npm --version'
+                 }
             }
-        }
-    }
+        stage('Test') {
+            steps {
+                sh 'npm test'
+            }
+        }    
+   }
 }
