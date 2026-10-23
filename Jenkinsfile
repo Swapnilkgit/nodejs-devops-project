@@ -31,6 +31,21 @@ pipeline {
                 sh 'npm test'
             }
         }
+        
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv('SonarQube') {
+                    sh '''
+                        sonar-scanner \
+                          -Dsonar.projectKey=nodejs-app \
+                          -Dsonar.projectName="Node.js App" \
+                          -Dsonar.sources=. \
+                          -Dsonar.exclusions=node_modules/**,coverage/**,.git/**
+                    '''
+                }
+            }
+        }
+
 
         stage('Build Docker Image') {
             steps {
