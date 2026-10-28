@@ -14,6 +14,12 @@ pipeline {
             }
         }
 
+        stage('Check Node.js') {
+            steps {
+                sh 'node --version && npm --version'
+            }
+        }
+
         stage('Install Dependencies') {
             steps {
                 sh 'npm ci'
@@ -31,7 +37,7 @@ pipeline {
                 sh 'npm test'
             }
         }
-        
+
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('SonarQube') {
@@ -45,7 +51,7 @@ pipeline {
                 }
             }
         }
-        
+
         stage('Quality Gate') {
             steps {
                 timeout(time: 5, unit: 'MINUTES') {
@@ -53,27 +59,6 @@ pipeline {
                 }
             }
         }
-
-
-        stage('Build Docker Image') {
-            steps {
-                sshagent(credentials: ['jenkins-build-key']) {
-                    sh '''
-                        mkdir -p "$WORKSPACE/.ssh"
-                        chmod 700 "$WORKSPACE/.ssh"
-
-                        printf '%s\\n' \
-                          '192.168.1.10 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIL8xaVScrKmtk/1kGy/DDwMVHdXZ9VFL6y6ubpP0IEZd' \
-                          > "$WORKSPACE/.ssh/known_hosts"
-
-                        chmod 600 "$WORKSPACE/.ssh/known_hosts"
-
-                        ssh -o StrictHostKeyChecking=yes \
-                            -o UserKnownHostsFile="$WORKSPACE/.ssh/known_hosts" \
-                            jenkins-build@192.168.1.10
-                    '''
-                }
-            }
-        }
     }
 }
+
