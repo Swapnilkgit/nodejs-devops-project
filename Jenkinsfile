@@ -4,6 +4,7 @@ pipeline {
 
     tools {
         nodejs 'NodeJS-24'
+        sonarQubeScanner 'SonarScanner'
     }
 
     stages {
