@@ -1,4 +1,3 @@
-
 pipeline {
     agent any
 
@@ -45,15 +44,15 @@ pipeline {
                   name: 'SonarScanner',
                   type: 'hudson.plugins.sonar.SonarRunnerInstallation'
             )
-          withSonarQubeEnv('SonarQube') {
-             withEnv(["SONAR_TOKEN=${env.SONAR_AUTH_TOKEN}"]) {
-               sh """
-                  ${scannerHome}/bin/sonar-scanner \
-                    -Dsonar.projectKey=nodejs-app \
-                    -Dsonar.projectName="Node.js App" \
-                    -Dsonar.sources=. \
-                    -Dsonar.exclusions=node_modules/**,coverage/**,.git/**
-        """
+            withSonarQubeEnv('SonarQube') {
+               withEnv(["SONAR_TOKEN=${env.SONAR_AUTH_TOKEN}"]) {
+                 sh """
+                    ${scannerHome}/bin/sonar-scanner \
+                     -Dsonar.projectKey=nodejs-app \
+                     -Dsonar.projectName="Node.js App" \
+                     -Dsonar.sources=. \
+                     -Dsonar.exclusions=node_modules/**,coverage/**,.git/**
+          """
     }
 }
         stage('Quality Gate') {
@@ -65,4 +64,3 @@ pipeline {
         }
     }
 }
-
