@@ -47,7 +47,21 @@ pipeline {
             )
 
             withSonarQubeEnv('SonarQube') {
-                sh """
+                sh '''
+                   if [ -n "$SONAR_AUTH_TOKEN" ]; then
+                      echo "SONAR_AUTH_TOKEN is set"
+                   else
+                      echo "SONAR_AUTH_TOKEN is empty"
+                   fi
+
+                   if [ -n "$SONAR_TOKEN" ]; then
+                      echo "SONAR_TOKEN is set"
+                   else
+                      echo "SONAR_TOKEN is empty"
+                   fi
+               '''
+
+                 sh """
                     ${scannerHome}/bin/sonar-scanner \
                       -Dsonar.projectKey=nodejs-app \
                       -Dsonar.projectName="Node.js App" \
