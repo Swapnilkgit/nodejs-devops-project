@@ -53,6 +53,7 @@ pipeline {
                         withEnv(["SONAR_TOKEN=${env.SONAR_AUTH_TOKEN}"]) {
                             sh """
                                 ${scannerHome}/bin/sonar-scanner \
+                                  -Dsonar.nodejs.executable=${nodeHome}/bin/node
                                   -Dsonar.projectKey=nodejs-app \
                                   -Dsonar.projectName="Node.js App" \
                                   -Dsonar.sources=. \
