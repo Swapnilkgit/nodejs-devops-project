@@ -37,17 +37,24 @@ pipeline {
             }
         }
         
+        
         stage('SonarQube Analysis') {
             steps {
                 script {
+                    def scannerHome = tool(
+                        name: 'SonarScanner',
+                        type: 'hudson.plugins.sonar.SonarRunnerInstallation'
+                    )
+
                     withSonarQubeEnv('SonarQube') {
                         withEnv(["SONAR_TOKEN=${env.SONAR_AUTH_TOKEN}"]) {
-                            sh '''
-                                echo "Checking SonarQube authentication..."
-                                curl -sS -u "$SONAR_TOKEN:" \
-                                  http://192.168.1.10:9000/api/authentication/validate
-                                echo
-                            '''
+                            sh """
+                                ${scannerHome}/bin/sonar-scanner \
+                                  -Dsonar.projectKey=nodejs-app \
+                                  -Dsonar.projectName="Node.js App" \
+                                  -Dsonar.sources=. \
+                                  -Dsonar.exclusions=node_modules/**,coverage/**,.git/**
+                            """
                         }
                     }
                 }
