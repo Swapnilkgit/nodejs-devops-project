@@ -40,18 +40,24 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('SonarQube') {
-                    sh '''
-                        sonar-scanner \
-                          -Dsonar.projectKey=nodejs-app \
-                          -Dsonar.projectName="Node.js App" \
-                          -Dsonar.sources=. \
-                          -Dsonar.exclusions=node_modules/**,coverage/**,.git/**
-                    '''
-                }
+              script {
+                def scannerHome = tool(
+                  name: 'SonarScanner',
+                  type: 'hudson.plugins.sonar.SonarRunnerInstallation'
+            )
+
+            withSonarQubeEnv('SonarQube') {
+                sh """
+                    ${scannerHome}/bin/sonar-scanner \
+                      -Dsonar.projectKey=nodejs-app \
+                      -Dsonar.projectName="Node.js App" \
+                      -Dsonar.sources=. \
+                      -Dsonar.exclusions=node_modules/**,coverage/**,.git/**
+                """
             }
         }
-
+    }
+}
         stage('Quality Gate') {
             steps {
                 timeout(time: 5, unit: 'MINUTES') {
