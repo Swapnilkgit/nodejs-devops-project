@@ -44,20 +44,31 @@ pipeline {
                   name: 'SonarScanner',
                   type: 'hudson.plugins.sonar.SonarRunnerInstallation'
             )
+
             withSonarQubeEnv('SonarQube') {
-               withEnv(["SONAR_TOKEN=${env.SONAR_AUTH_TOKEN}"]) {
-                 sh """
-                    ${scannerHome}/bin/sonar-scanner \
-                     -Dsonar.projectKey=nodejs-app \
-                     -Dsonar.projectName="Node.js App" \
-                     -Dsonar.sources=. \
-                     -Dsonar.exclusions=node_modules/**,coverage/**,.git/**
-               """
-             }
-          }
-       }
+                sh '''
+                    if [ -z "$SONAR_AUTH_TOKEN" ]; then
+                        echo "ERROR: SONAR_AUTH_TOKEN is empty"
+                        exit 1
+                    fi
+
+                    echo "SONAR_AUTH_TOKEN is present"
+                '''
+
+                withEnv(["SONAR_TOKEN=${env.SONAR_AUTH_TOKEN}"]) {
+                    sh """
+                        ${scannerHome}/bin/sonar-scanner \
+                          -Dsonar.projectKey=nodejs-app \
+                          -Dsonar.projectName="Node.js App" \
+                          -Dsonar.sources=. \
+                          -Dsonar.exclusions=node_modules/**,coverage/**,.git/**
+                    """
+                }
+            }
+        }
     }
-}    
+}       
+
         stage('Quality Gate') {
             steps {
                 timeout(time: 5, unit: 'MINUTES') {
