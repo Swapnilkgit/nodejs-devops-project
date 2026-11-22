@@ -74,7 +74,7 @@ pipeline {
                 sh '''
                    export TMPDIR=/data/trivy-tmp
 
-                   trivy --config "" --cache-dir /data/trivy-cache --timeout 15m fs --scanners vuln,secret --severity HIGH,CRITICAL --format json --output trivy-fs-report.json .
+                   trivy --config "" --cache-dir /data/trivy-cache --timeout 15m fs --scanners vuln,secret --severity HIGH,CRITICAL --format table --output trivy-fs-report.txt /Devops/nodejs-app
         '''
      }
    }
