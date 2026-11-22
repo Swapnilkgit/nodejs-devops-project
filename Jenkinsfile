@@ -78,9 +78,9 @@ pipeline {
         '''
      }
    }
-        stage('Archive Trivy Report') {
-            steps {
-                 archiveArtifacts artifacts: 'trivy-fs-report.json',
+        post {
+            always {
+                 archiveArtifacts artifacts: 'trivy-fs-report.txt',
                                   allowEmptyArchive: true
       }
     }
