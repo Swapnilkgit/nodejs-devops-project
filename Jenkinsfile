@@ -41,7 +41,7 @@ pipeline {
             steps {
               script {
                 def scannerHome = tool(
-                  name: 'SonarScanner',
+                  name: 'sonar-scanner',
                   type: 'hudson.plugins.sonar.SonarRunnerInstallation'
               )
 
