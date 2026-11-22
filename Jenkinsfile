@@ -78,11 +78,11 @@ pipeline {
         '''
      }
    }
-        post {
-            always {
-                 archiveArtifacts artifacts: 'trivy-fs-report.txt',
-                                  allowEmptyArchive: true
+ }
+    post {
+      always {
+            archiveArtifacts artifacts: 'trivy-fs-report.txt',
+                             allowEmptyArchive: true
       }
     }
   }
-}
