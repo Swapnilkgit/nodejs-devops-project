@@ -37,33 +37,29 @@ pipeline {
             }
         }
         
-        
         stage('SonarQube Analysis') {
             steps {
-               script {
-                 def scannerHome = tool(
-                   name: 'SonarScanner',
-                   type: 'hudson.plugins.sonar.SonarRunnerInstallation'
-            )
+              script {
+                def scannerHome = tool(
+                  name: 'SonarScanner',
+                  type: 'hudson.plugins.sonar.SonarRunnerInstallation'
+              )
 
-                 def nodeHome = tool 'NodeJS-24'
-                 echo "Node.js tool path: ${nodeHome}"
-                 sh "${nodeHome}/bin/node -v"
-                 withSonarQubeEnv('SonarQube') {
-                        withEnv(["SONAR_TOKEN=${env.SONAR_AUTH_TOKEN}"]) {
-                            sh """
-                                ${scannerHome}/bin/sonar-scanner \
-                                  -Dsonar.nodejs.executable=${nodeHome}/bin/node
-                                  -Dsonar.projectKey=nodejs-app \
-                                  -Dsonar.projectName="Node.js App" \
-                                  -Dsonar.sources=. \
-                                  -Dsonar.exclusions=node_modules/**,coverage/**,.git/**
-                            """
-                        }
-                    }
-                }
+              def nodeHome = tool 'NodeJS-24'
+
+              withSonarQubeEnv('SonarQube') {
+                sh """
+                    ${scannerHome}/bin/sonar-scanner \
+                      -Dsonar.nodejs.executable=${nodeHome}/bin/node \
+                      -Dsonar.projectKey=nodejs-app \
+                      -Dsonar.projectName="Node.js App" \
+                      -Dsonar.sources=. \
+                      -Dsonar.exclusions=node_modules/**,coverage/**,.git/**
+                """
             }
         }
+    }
+}
 
 
         stage('Quality Gate') {
@@ -73,5 +69,20 @@ pipeline {
                 }
             }
         }
+        stage('Trivy Filesystem Scan') {
+            steps {
+                sh '''
+                   export TMPDIR=/data/trivy-tmp
+
+                   trivy --config "" cache-dir /data/trivy-cache --timeout 15m fs --scanners vuln,secret --severity HIGH,CRITICAL --exit-code 1 --format json --output trivy-fs-report.json .
+        '''
+     }
+   }
+        stage('Archive Trivy Report') {
+            steps {
+                 archiveArtifacts artifacts: 'trivy-fs-report.json',
+                                  allowEmptyArchive: true
+      }
     }
+  }
 }
