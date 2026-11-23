@@ -96,6 +96,29 @@ pipeline {
         '''
     }
 }
+        stage('Docker Push') {
+            steps {
+                 withCredentials([usernamePassword(
+                 credentialsId: 'dockerhub-creds',
+                 usernameVariable: 'DOCKERHUB_USER',
+                 passwordVariable: 'DOCKERHUB_TOKEN'
+        )]) {
+            sh '''
+                set +x
+
+                printf '%s' "$DOCKERHUB_TOKEN" | \
+                docker login --username "$DOCKERHUB_USER" --password-stdin
+
+                docker tag nodejs-devops:v1 \
+                    swapnil9998/nodejs-devops:v1
+
+                docker push swapnil9998/nodejs-devops:v1
+
+                docker logout
+            '''
+        }
+    }
+}
  }
     post {
       always {
