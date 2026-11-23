@@ -5,9 +5,9 @@ const PORT = process.env.PORT || 3000;
 
 app.get('/', (req, res) => {
   res.json({
-    message: 'Hello from the DevOps project!',
+    message: 'Hello from DevOps v2!',
     status: 'Application running',
-    version: '1.0.0'
+    version: '2.0.0'
   });
 });
 
