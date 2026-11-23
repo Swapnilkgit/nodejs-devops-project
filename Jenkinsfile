@@ -119,6 +119,19 @@ pipeline {
         }
     }
 }
+        stage('Kubernetes Deploy') {
+            steps {
+              sh '''
+                 export KUBECONFIG=/var/lib/jenkins/.kube/config
+
+                 /usr/local/bin/kubectl apply -f k8s/deployment.yaml
+                 /usr/local/bin/kubectl apply -f k8s/service.yaml
+
+                 /usr/local/bin/kubectl rollout status deployment/nodejs-deployment \
+                    --timeout=120s
+        '''
+     }
+   }    
  }
     post {
       always {
