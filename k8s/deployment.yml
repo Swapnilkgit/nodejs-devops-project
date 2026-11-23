@@ -1,7 +1,8 @@
-kind: Deployment
 apiVersion: apps/v1
+kind: Deployment
 metadata:
   name: nodejs-deployment
+  namespace: default
 spec:
   replicas: 2
   selector:
@@ -12,9 +13,19 @@ spec:
       labels:
         app: nodejs-app
     spec:
+      automountServiceAccountToken: false
       containers:
         - name: nodejs-app
           image: swapnil9998/nodejs-devops:v1
+          imagePullPolicy: Always
           ports:
             - containerPort: 3000
-          imagePullPolicy: Always
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+              ephemeral-storage: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "256Mi"
+              ephemeral-storage: "512Mi"
