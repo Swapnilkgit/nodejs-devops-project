@@ -78,6 +78,14 @@ pipeline {
         '''
      }
    }
+        stage('Docker Build') {
+            steps {
+                sh '''
+                  docker build -t nodejs-devops:v1 .
+                  docker images nodejs-devops:v1
+        '''
+    }
+  }
  }
     post {
       always {
