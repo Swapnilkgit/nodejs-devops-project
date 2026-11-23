@@ -86,6 +86,16 @@ pipeline {
         '''
     }
   }
+        stage('Trivy Image Scan') {
+            steps {
+                sh '''
+                  export TMPDIR=/data/trivy-tmp
+
+                  trivy --config "" --cache-dir /data/trivy-cache --timeout 15m image --scanners vuln --severity HIGH,CRITICAL --format table \
+                    --output /Devops/nodejs-app/reports/trivy-image-report.txt nodejs-devops:v1
+        '''
+    }
+}
  }
     post {
       always {
