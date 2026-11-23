@@ -124,8 +124,8 @@ pipeline {
               sh '''
                  export KUBECONFIG=/var/lib/jenkins/.kube/config
 
-                 /usr/local/bin/kubectl apply -f k8s/deployment.yaml
-                 /usr/local/bin/kubectl apply -f k8s/service.yaml
+                 /usr/local/bin/kubectl apply -f /Devops/nodejs-app/k8s/deployment.yml
+                 /usr/local/bin/kubectl apply -f /Devops/nodejs-app/k8s/service.yml
 
                  /usr/local/bin/kubectl rollout status deployment/nodejs-deployment \
                     --timeout=120s
