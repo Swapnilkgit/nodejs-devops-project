@@ -23,7 +23,7 @@ spec:
           image: swapnil9998/nodejs-devops:v2
           imagePullPolicy: Always
           ports:
-            - containerport: 3000
+            - containerPort: 3000
           readinessProbe:
              httpGet:
                 path: /health
